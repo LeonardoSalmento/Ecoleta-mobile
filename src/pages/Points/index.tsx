@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, ScrollView, Image, Alert } from 'react-native';
 import Constants from 'expo-constants';
 import {Feather as Icon} from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
 import { SvgUri } from 'react-native-svg';
 import * as Location from 'expo-location';
@@ -24,13 +24,23 @@ interface Point{
     
 }
 
+interface Params{
+    uf:string,
+    city:string
+
+}
+
 const Points = () => {
     const navigation = useNavigation();
+    const route = useRoute();
 
     const [items, setItems] = useState<Item[]>([]);
     const [points, setPoints] = useState<Point[]>([]);
     const [selectedItems, setSelectedItems] = useState<number[]>([]);
     const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0]);
+
+    const routeParams = route.params as Params;
+
 
     useEffect(()=>{
         async function loadPosition(){
@@ -56,14 +66,14 @@ const Points = () => {
     useEffect(()=>{
         api.get('points', {
             params:{
-                city: 'Teresina',
-                uf:'PI',
-                items:[1, 2]
+                uf:routeParams.uf,
+                city: routeParams.city,
+                items:selectedItems
             }
         }).then(response=>{
             setPoints(response.data);
         })
-    }, []);
+    }, [selectedItems]);
 
     useEffect(()=>{
         api.get('items').then(response=>{

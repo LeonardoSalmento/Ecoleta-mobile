@@ -7,6 +7,7 @@ import api from '../../services/api';
 import * as MailComposer from 'expo-mail-composer';
 
 
+
 interface Params{
     point_id: number;
 }
